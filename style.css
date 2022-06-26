@@ -2,6 +2,14 @@ body {
     margin: 0px;
 }
 
+.bg20 {
+    background-image: url('images/bg43.png');
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: 60% 95%;
+    margin: 10px;
+}
+
 #container {
     width: 1028px;
     margin: 8px 0px
@@ -29,3 +37,5 @@ body {
 .indent {
     margin: 0px 28px
 }
+
+
