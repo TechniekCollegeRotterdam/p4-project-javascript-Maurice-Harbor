@@ -17,4 +17,4 @@
   *This game has music/sound
   
 - Link to my Game
-  https://github.com/TechniekCollegeRotterdam/p4-project-javascript-Maurice-Harbor
+  https://github.com/TechniekCollegeRotterdam/p4-project-javascript-Maurice-Harbor/compare/background-image...Maurice-Harbor:main
