@@ -639,10 +639,17 @@ function init()
         else
             keys[' '] = false;
     }, false);
-
+    
+    //cheats with mouse
     mute.addEventListener('click', function (e)
     {
-        isMuted = !isMuted;
+        // let mousePos = getMousePos(cvs, e);
+        // let message = mousePos.y + HEIGHT + level;
+
+        // player.x = mousePos.x;
+        // player.y = mousePos.y + HEIGHT + level;
+        // console.log(message);
+        
     }, false);
 
     previousTime = new Date().getTime();
@@ -761,7 +768,7 @@ function initLevels()
 function keyDown(e)
 {
     keys[e.key] = true;
-    // console.log(e);
+    //console.log(e);
 }
 
 function keyUp(e)
@@ -769,6 +776,7 @@ function keyUp(e)
     keys[e.key] = false;
 }
 
+//your end time
 function run(time)
 {
     let currentTime = new Date().getTime();
