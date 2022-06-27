@@ -1,5 +1,5 @@
 'use strict'
-
+// all variables
 let cvs;
 let gfx;
 let mute;
@@ -157,7 +157,7 @@ class Wall
     }
 }
 
-//this is the bounce
+//this is the wallbounce
 class AABB
 {
     constructor(x, y, w, h)
@@ -303,12 +303,11 @@ class Player
         this.vx = r.x * boundFriction;
         this.vy = r.y;
         audios.bounce.start();
-        // this.onGround = false;
     }
 
     update(delta)
     {
-        //Apply previous acceleration
+        //Acceleration of character
         this.vx *= globalFriction;
         this.vy *= globalFriction;
         if (Math.abs(this.vx) < 0.0001) this.vx = 0;
@@ -322,8 +321,6 @@ class Player
         level = Math.trunc(this.y / HEIGHT);
         levelMax = level > levelMax ? level : levelMax;
 
-        // let moving = this.vx * this.vx + this.vy + this.vy;
-        // let falling = this.vy < 0 ? true : false;
 
         if (this.onGround)
         {
@@ -376,7 +373,6 @@ class Player
             this.onGround = false;
         }
 
-        //Test if current acceleration make collision happen or not 
         c = this.testCollide(this.vx, this.vy);
         if (c.side != undefined)
         {
@@ -673,7 +669,7 @@ function init()
     audios.jump.src = "audios/audios_jump2.au";
     audios.jump.volume = volume;
 
-
+    //Audio que's
     audios.landing.start = function ()
     {
         if (isMuted) return;
@@ -768,7 +764,6 @@ function initLevels()
 function keyDown(e)
 {
     keys[e.key] = true;
-    //console.log(e);
 }
 
 function keyUp(e)

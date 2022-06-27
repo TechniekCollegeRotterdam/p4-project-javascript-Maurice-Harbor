@@ -20,7 +20,7 @@ body {
     width: 50%;
     height: 50%;
     border-radius: 50px;
-   box-shadow: 0 20px 50px 0 rgb(0, 0, 0), 0 6px 20px 0 rgba(0, 0, 0, 0.795);
+   box-shadow: 0 20px 50px 0 rgb(253, 0, 0), 0 6px 20px 0 rgba(122, 22, 22, 0.795);
 }
 
 .but {

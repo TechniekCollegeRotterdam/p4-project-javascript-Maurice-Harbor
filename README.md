@@ -15,6 +15,9 @@
   *It works on the Keyboard
   *This game gets harder over time
   *This game has music/sound
+  *It looks visually pleasing
+  *There is a end score
+  *It has canvas
   
 - Link to my Game
   https://github.com/TechniekCollegeRotterdam/p4-project-javascript-Maurice-Harbor/compare/background-image...Maurice-Harbor:main
