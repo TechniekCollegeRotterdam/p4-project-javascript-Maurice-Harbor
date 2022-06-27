@@ -41,68 +41,55 @@ let level = 0;
 let levelMax = 0;
 
 // calculations for the game, like spacing, collide and grafity
-class Vector
-{
-    constructor(x, y)
-    {
+class Vector {
+    constructor(x, y) {
         this.x = x;
         this.y = y;
     }
 
-    normalize()
-    {
+    normalize() {
         let len = this.getLength();
 
         this.x /= len;
         this.y /= len;
     }
 
-    getLength()
-    {
+    getLength() {
         return Math.sqrt(this.x * this.x + this.y * this.y);
     }
 
-    dot(v)
-    {
+    dot(v) {
         return this.x * v.x + this.y * v.y;
     }
 
-    cross(v)
-    {
+    cross(v) {
         return this.y * v.x - this.x * v.y;
     }
 
-    add(v)
-    {
+    add(v) {
         return new Vector(this.x + v.x, this.y + v.y);
     }
 
-    sub(v)
-    {
+    sub(v) {
         return new Vector(this.x - v.x, this.y - v.y);
     }
 
-    div(v)
-    {
+    div(v) {
         return new Vector(this.x / v, this.y / v);
     }
 
-    mul(v)
-    {
+    mul(v) {
         return new Vector(this.x * v, this.y * v);
     }
 
-    equals(v)
-    {
+    equals(v) {
         return this.x == v.x && this.y == v.y;
     }
 }
 
 // this is for the walls of the game
-class Wall
-{
-    constructor(level, x0, y0, wx, wy)
-    {
+class Wall {
+    constructor(level, x0, y0, wx, wy) {
         this.level = level;
         this.x0 = x0;
         this.y0 = y0;
@@ -112,28 +99,31 @@ class Wall
         this.wy = wy;
     }
 
-    checkCollideAABB(aabb, vx, vy)
-    {
+    checkCollideAABB(aabb, vx, vy) {
         let collide =
             this.checkCollide(aabb.x, aabb.y, aabb.x + vx, aabb.y + vy) ? new Vector(aabb.x, aabb.y) :
-                this.checkCollide(aabb.X, aabb.y, aabb.X + vx, aabb.y + vy) ? new Vector(aabb.X, aabb.y) :
-                    this.checkCollide(aabb.x, aabb.Y, aabb.x + vx, aabb.Y + vy) ? new Vector(aabb.x, aabb.Y) :
-                        this.checkCollide(aabb.X, aabb.Y, aabb.X + vx, aabb.Y + vy) ? new Vector(aabb.X, aabb.Y) : undefined;
+            this.checkCollide(aabb.X, aabb.y, aabb.X + vx, aabb.y + vy) ? new Vector(aabb.X, aabb.y) :
+            this.checkCollide(aabb.x, aabb.Y, aabb.x + vx, aabb.Y + vy) ? new Vector(aabb.x, aabb.Y) :
+            this.checkCollide(aabb.X, aabb.Y, aabb.X + vx, aabb.Y + vy) ? new Vector(aabb.X, aabb.Y) : undefined;
 
         if (collide != undefined)
-            return { collide, endPoint: false };
-        else
-        {
+            return {
+                collide,
+                endPoint: false
+            };
+        else {
             collide =
                 aabb.checkCollidePoint(this.x0, this.y0) ? new Vector(this.x0, this.y0) :
-                    aabb.checkCollidePoint(this.x1, this.y1) ? new Vector(this.x1, this.y1) : undefined;
+                aabb.checkCollidePoint(this.x1, this.y1) ? new Vector(this.x1, this.y1) : undefined;
 
-            return { collide, endPoint: collide ? true : false }
+            return {
+                collide,
+                endPoint: collide ? true : false
+            }
         }
     }
 
-    checkCollide(ax, ay, bx, by)
-    {
+    checkCollide(ax, ay, bx, by) {
         let z0 = (this.x1 - this.x0) * (ay - this.y0) - (this.y1 - this.y0) * (ax - this.x0);
         let z1 = (this.x1 - this.x0) * (by - this.y1) - (this.y1 - this.y0) * (bx - this.x1);
 
@@ -143,25 +133,21 @@ class Wall
         return (z0 * z1) < 0 && (z2 * z3) < 0;
     }
 
-    getNormal()
-    {
+    getNormal() {
         let res = new Vector(this.y1 - this.y0, this.x0 - this.x1);
         res.normalize();
 
         return res;
     }
 
-    convert()
-    {
+    convert() {
         return new Wall(this.level, this.x0, this.y0 + this.level * HEIGHT, this.wx, this.wy);
     }
 }
 
 //this is the wallbounce
-class AABB
-{
-    constructor(x, y, w, h)
-    {
+class AABB {
+    constructor(x, y, w, h) {
         this.x = x;
         this.y = y;
         this.X = x + w;
@@ -170,23 +156,20 @@ class AABB
         this.height = h;
     }
 
-    checkCollidePoint(px, py)
-    {
+    checkCollidePoint(px, py) {
         if (px > this.x && px < this.X && py > this.y && py < this.Y)
             return true;
         else
             return false;
     }
 
-    checkCollideBox(aabb)
-    {
+    checkCollideBox(aabb) {
         let rlb = this.checkCollidePoint(aabb.x, aabb.y);
         let rrb = this.checkCollidePoint(aabb.X, aabb.y);
         let rlt = this.checkCollidePoint(aabb.x, aabb.Y);
         let rrt = this.checkCollidePoint(aabb.X, aabb.Y);
 
-        let res =
-        {
+        let res = {
             collide: rlb || rrb || rlt || rrt,
             lb: rlb,
             rb: rrb,
@@ -197,8 +180,7 @@ class AABB
         return res;
     }
 
-    move(dx, dy)
-    {
+    move(dx, dy) {
         this.x += dx;
         this.y += dy;
         this.X += dx;
@@ -207,25 +189,20 @@ class AABB
 }
 
 //the blocks
-class Block
-{
-    constructor(level, aabb)
-    {
+class Block {
+    constructor(level, aabb) {
         this.level = level;
         this.aabb = aabb;
     }
 
-    convert()
-    {
+    convert() {
         return new AABB(this.aabb.x, this.aabb.y + this.level * HEIGHT, this.aabb.width, this.aabb.height);
     }
 }
 
 //the character
-class Player
-{
-    constructor(x, y)
-    {
+class Player {
+    constructor(x, y) {
         this.crouching = false;
         this.onGround = true;
         this.x = x;
@@ -237,15 +214,12 @@ class Player
         this.jumpGauge = 0;
     }
 
-    aabb()
-    {
+    aabb() {
         return new AABB(this.x, this.y, this.size, this.size);
     }
 
-    getCenter()
-    {
-        let res =
-        {
+    getCenter() {
+        let res = {
             x: this.x + this.size / 2,
             y: this.y + this.size / 2
         }
@@ -253,51 +227,44 @@ class Player
         return res;
     }
 
-    getDrawImage()
-    {
+    getDrawImage() {
         if (this.crouching)
             return 'crouch';
         else
             return 'normal';
     }
 
-    collideToLeft(w)
-    {
+    collideToLeft(w) {
         this.x = w;
         this.vx *= -1 * boundFriction;
         audios.bounce.start();
     }
 
-    collideToRight(w)
-    {
+    collideToRight(w) {
         this.x = w - this.size;
         this.vx *= -1 * boundFriction;
         audios.bounce.start();
     }
 
-    collideToTop(w)
-    {
+    collideToTop(w) {
         this.y = w - this.size;
         this.vy *= -1 * boundFriction;
         audios.bounce.start();
     }
 
-    collideToBottom(w)
-    {
+    collideToBottom(w) {
         this.onGround = true;
         this.y = w;
         this.vx = 0;
         this.vy = 0;
-        if (isTouch)
-        {
+        if (isTouch) {
             keys.ArrowLeft = false;
             keys.ArrowRight = false;
         }
         audios.landing.start();
     }
 
-    collideToWall(s, r)
-    {
+    collideToWall(s, r) {
         this.x = s.x;
         this.y = s.y;
         this.vx = r.x * boundFriction;
@@ -305,8 +272,7 @@ class Player
         audios.bounce.start();
     }
 
-    update(delta)
-    {
+    update(delta) {
         //Acceleration of character
         this.vx *= globalFriction;
         this.vy *= globalFriction;
@@ -322,38 +288,28 @@ class Player
         levelMax = level > levelMax ? level : levelMax;
 
 
-        if (this.onGround)
-        {
+        if (this.onGround) {
             this.vx *= groundFriction;
 
-            if (keys[' '] && !this.crouching)
-            {
+            if (keys[' '] && !this.crouching) {
                 this.crouching = true;
-            }
-            else if (keys[' '] && this.crouching)
-            {
+            } else if (keys[' '] && this.crouching) {
                 this.jumpGauge >= 1 ? this.jumpGauge = 1 : this.jumpGauge += delta / chargingConst;
-            }
-            else if (keys.ArrowLeft && !this.crouching)
-            {
+            } else if (keys.ArrowLeft && !this.crouching) {
                 c = this.testCollide(-speed, 0);
 
                 if (c.side == undefined)
                     this.vx = -speed;
                 else
                     this.vx = 0;
-            }
-            else if (keys.ArrowRight && !this.crouching)
-            {
+            } else if (keys.ArrowRight && !this.crouching) {
                 c = this.testCollide(speed, 0);
 
                 if (c.side == undefined)
                     this.vx = speed;
                 else
                     this.vx = 0;
-            }
-            else if (!keys[' '] && this.crouching)
-            {
+            } else if (!keys[' '] && this.crouching) {
                 if (keys.ArrowLeft) this.vx = -sideJump;
                 else if (keys.ArrowRight) this.vx = sideJump;
                 audios.jump.start();
@@ -367,160 +323,119 @@ class Player
 
         //Apply gravity
         c = this.testCollide(0, -gravity);
-        if (c.side == undefined)
-        {
+        if (c.side == undefined) {
             this.vy -= gravity;
             this.onGround = false;
         }
 
         c = this.testCollide(this.vx, this.vy);
-        if (c.side != undefined)
-        {
+        if (c.side != undefined) {
             if (c.side != 'error')
                 this.reponseCollide(c);
         }
 
     }
 
-    testCollide(nvx, nvy)
-    {
+    testCollide(nvx, nvy) {
         let side;
         let set;
 
         let box = this.aabb();
         box.move(nvx, nvy);
 
-        if (box.x < 0)
-        {
+        if (box.x < 0) {
             side = 'left';
             set = 0;
-        }
-        else if (box.X > WIDTH)
-        {
+        } else if (box.X > WIDTH) {
             side = 'right';
             set = WIDTH;
-        }
-        else if (box.y < 0)
-        {
+        } else if (box.y < 0) {
             side = 'bottom';
             set = 0;
-        }
-        else
-        {
-            for (let b of blocks)
-            {
+        } else {
+            for (let b of blocks) {
                 if (b.level != level) continue;
 
                 let aabb = b.convert();
                 let r = aabb.checkCollideBox(box);
 
-                if (r.collide)
-                {
-                    if (r.lb && r.lt)
-                    {
+                if (r.collide) {
+                    if (r.lb && r.lt) {
                         side = 'left';
                         set = aabb.X;
-                    }
-                    else if (r.rb && r.rt)
-                    {
+                    } else if (r.rb && r.rt) {
                         side = 'right';
                         set = aabb.x;
-                    }
-                    else if (r.lb && r.rb)
-                    {
+                    } else if (r.lb && r.rb) {
                         side = 'bottom';
                         set = aabb.Y;
-                    }
-                    else if (r.lt && r.rt)
-                    {
+                    } else if (r.lt && r.rt) {
                         side = 'top';
                         set = aabb.y;
-                    }
-                    else if (r.lb)
-                    {
+                    } else if (r.lb) {
                         let bx = box.x - this.vx;
-                        if (bx > aabb.X)
-                        {
+                        if (bx > aabb.X) {
                             side = 'left';
                             set = aabb.X;
-                        }
-                        else
-                        {
+                        } else {
                             side = 'bottom';
                             set = aabb.Y;
                         }
-                    }
-                    else if (r.rb)
-                    {
+                    } else if (r.rb) {
                         let bx = box.X - this.vx;
-                        if (bx < aabb.x)
-                        {
+                        if (bx < aabb.x) {
                             side = 'right';
                             set = aabb.x;
-                        }
-                        else
-                        {
+                        } else {
                             side = 'bottom';
                             set = aabb.Y;
                         }
-                    }
-                    else if (r.lt)
-                    {
+                    } else if (r.lt) {
                         let bx = box.x - this.vx;
-                        if (bx > aabb.X)
-                        {
+                        if (bx > aabb.X) {
                             side = 'left';
                             set = aabb.X;
-                        }
-                        else
-                        {
+                        } else {
                             side = 'top';
                             set = aabb.y;
                         }
-                    }
-                    else if (r.rt)
-                    {
+                    } else if (r.rt) {
                         let bx = box.X - this.vx;
-                        if (bx < aabb.x)
-                        {
+                        if (bx < aabb.x) {
                             side = 'right';
                             set = aabb.x;
-                        }
-                        else
-                        {
+                        } else {
                             side = 'top';
                             set = aabb.y;
                         }
                     }
 
-                    return { side, set };
+                    return {
+                        side,
+                        set
+                    };
                 }
             }
 
-            for (let w of walls)
-            {
+            for (let w of walls) {
                 if (w.level != level) continue;
 
                 w = w.convert();
 
                 let r = w.checkCollideAABB(box, nvx, nvy);
 
-                if (r.collide != undefined)
-                {
+                if (r.collide != undefined) {
                     side = 'wall';
                     let nv = new Vector(nvx, nvy);
                     let n;
 
-                    if (!r.endPoint)
-                    {
+                    if (!r.endPoint) {
                         let hitPoint = getIntersect(w.x0, w.y0, w.x1, w.y1, r.collide.x, r.collide.y, r.collide.x + nvx, r.collide.y + nvy);
 
                         set = new Vector(box.x, box.y).add(hitPoint.sub(r.collide));
                         n = w.getNormal();
 
-                    }
-                    else
-                    {
+                    } else {
                         n = new Vector(w.x0, w.y0).sub(new Vector(w.x1, w.y1));
                         n.normalize();
                         set = new Vector(box.x, box.y).sub(nv.mul(3));
@@ -529,18 +444,23 @@ class Player
                     let ref = nv.sub(n.mul(2).mul(nv.dot(n)));
                     // let ref = nv.sub(n.mul(nv.dot(n)));
 
-                    return { side, set, ref };
+                    return {
+                        side,
+                        set,
+                        ref
+                    };
                 }
             }
         }
 
-        return { side, set };
+        return {
+            side,
+            set
+        };
     }
 
-    reponseCollide(c)
-    {
-        switch (c.side)
-        {
+    reponseCollide(c) {
+        switch (c.side) {
             case 'left':
                 this.collideToLeft(c.set);
                 break;
@@ -560,8 +480,7 @@ class Player
         }
     }
 
-    render()
-    {
+    render() {
         gfx.drawImage(images[this.getDrawImage()], this.x, HEIGHT - this.size - this.y + level * HEIGHT, this.size, this.size);
 
         gfx.beginPath();
@@ -571,14 +490,12 @@ class Player
     }
 }
 
-window.onload = function ()
-{
+window.onload = function () {
     init();
     run();
 };
 
-function init()
-{
+function init() {
     cvs = document.getElementById("cvs");
     gfx = cvs.getContext("2d");
     gfx.font = "20px Georgia";
@@ -588,64 +505,49 @@ function init()
     document.onkeydown = keyDown;
     document.onkeyup = keyUp;
 
-    cvs.addEventListener('click', function (e)
-    {
+    cvs.addEventListener('click', function (e) {
         let mousePos = getMousePos(cvs, e);
         let message = mousePos.x + ', ' + mousePos.y;
         console.log(message);
     }, false);
 
-    cvs.addEventListener('touchstart', function (e)
-    {
+    cvs.addEventListener('touchstart', function (e) {
         let pos = getTouchPos(cvs, e);
 
-        if (pos.x < WIDTH / 2 && pos.y < HEIGHT / 2)
-        {
+        if (pos.x < WIDTH / 2 && pos.y < HEIGHT / 2) {
             keys.ArrowLeft = true;
-        }
-        else if (pos.x >= WIDTH / 2 && pos.y < HEIGHT / 2)
-        {
+        } else if (pos.x >= WIDTH / 2 && pos.y < HEIGHT / 2) {
             keys.ArrowRight = true;
-        }
-        else if (pos.x < WIDTH / 5 * 2 && pos.y >= HEIGHT / 2)
-        {
+        } else if (pos.x < WIDTH / 5 * 2 && pos.y >= HEIGHT / 2) {
             keys[' '] = true;
             keys.ArrowLeft = true;
-        }
-        else if (pos.x >= WIDTH / 5 * 3 && pos.y >= HEIGHT / 2)
-        {
+        } else if (pos.x >= WIDTH / 5 * 3 && pos.y >= HEIGHT / 2) {
             keys[' '] = true;
             keys.ArrowRight = true;
-        }
-        else if (pos.x >= WIDTH / 5 * 2 && pos.x < WIDTH / 5 * 3 && pos.y >= HEIGHT / 2)
-        {
+        } else if (pos.x >= WIDTH / 5 * 2 && pos.x < WIDTH / 5 * 3 && pos.y >= HEIGHT / 2) {
             keys[' '] = true;
         }
 
         isTouch = true;
     }, false);
 
-    cvs.addEventListener('touchend', function (e)
-    {
-        if (!keys[' '])
-        {
+    cvs.addEventListener('touchend', function (e) {
+        if (!keys[' ']) {
             keys.ArrowLeft = false;
             keys.ArrowRight = false;
-        }
-        else
+        } else
             keys[' '] = false;
     }, false);
-    
+
     //cheats with mouse
-    mute.addEventListener('click', function (e)
-    {
+    mute.addEventListener('click', function (e) {
         // let mousePos = getMousePos(cvs, e);
         // let message = mousePos.y + HEIGHT + level;
 
         // player.x = mousePos.x;
         // player.y = mousePos.y + HEIGHT + level;
         // console.log(message);
-        
+
     }, false);
 
     previousTime = new Date().getTime();
@@ -653,10 +555,14 @@ function init()
     //Images 
     images.normal = new Image();
     images.normal.src = "./images/normal.png";
-    images.normal.onload = function () { resourceLoaded++; };
+    images.normal.onload = function () {
+        resourceLoaded++;
+    };
     images.crouch = new Image();
     images.crouch.src = "./images/crouch.png";
-    images.crouch.onload = function () { resourceLoaded++; };
+    images.crouch.onload = function () {
+        resourceLoaded++;
+    };
 
     //Audios
     audios.landing = new Audio();
@@ -670,22 +576,19 @@ function init()
     audios.jump.volume = volume;
 
     //Audio que's
-    audios.landing.start = function ()
-    {
+    audios.landing.start = function () {
         if (isMuted) return;
         audios.landing.pause();
         audios.landing.currentTime = 0;
         audios.landing.play();
     };
-    audios.bounce.start = function ()
-    {
+    audios.bounce.start = function () {
         if (isMuted) return;
         audios.bounce.pause();
         audios.bounce.currentTime = 0;
         audios.bounce.play();
     };
-    audios.jump.start = function ()
-    {
+    audios.jump.start = function () {
         if (isMuted) return;
         audios.jump.pause();
         audios.jump.currentTime = 0;
@@ -699,8 +602,7 @@ function init()
 }
 
 //Make game levels
-function initLevels()
-{
+function initLevels() {
     blocks.push(new Block(0, new AABB(100, 100, 150, 34)));
     blocks.push(new Block(0, new AABB(330, 230, 150, 34)));
     blocks.push(new Block(0, new AABB(710, 410, 116, 34)));
@@ -761,25 +663,21 @@ function initLevels()
     walls.push(new Wall(7, 715, 430, 0, 300));
 }
 
-function keyDown(e)
-{
+function keyDown(e) {
     keys[e.key] = true;
 }
 
-function keyUp(e)
-{
+function keyUp(e) {
     keys[e.key] = false;
 }
 
 //your end time
-function run(time)
-{
+function run(time) {
     let currentTime = new Date().getTime();
     passedTime += currentTime - previousTime;
     previousTime = currentTime;
 
-    while (passedTime >= msPerFrame)
-    {
+    while (passedTime >= msPerFrame) {
         update(msPerFrame);
         render();
         passedTime -= msPerFrame;
@@ -788,13 +686,11 @@ function run(time)
     requestAnimationFrame(run);
 }
 
-function update(delta)
-{
+function update(delta) {
     player.update(delta);
 }
 
-function render()
-{
+function render() {
     if (resourceLoaded != numResource)
         return;
 
@@ -802,56 +698,48 @@ function render()
 
     player.render();
 
-    blocks.forEach(b =>
-    {
+    blocks.forEach(b => {
         if (b.level != level) return;
 
         drawAABB(b.aabb);
     });
 
-    walls.forEach(w =>
-    {
+    walls.forEach(w => {
         if (w.level != level) return;
 
         drawWall(w);
     });
 
-    if (levelMax == 0)
-    {
+    if (levelMax == 0) {
         gfx.fillText("Let's go up!", 550, HEIGHT - 80);
         gfx.fillText(guideMsg, 550, HEIGHT - 45);
         gfx.fillText(guideMsg2, 550, HEIGHT - 25);
     }
-    if (level == 7)
-    {
+    if (level == 7) {
         gfx.fillText("Goal!", 880, HEIGHT - 700);
         gfx.fillText("↓", 890, HEIGHT - 680);
         gfx.fillText("Thanks for playing~", 810, HEIGHT - 550);
     }
 }
 
-function drawWall(wall)
-{
+function drawWall(wall) {
     gfx.beginPath();
     gfx.moveTo(wall.x0, HEIGHT - wall.y0);
     gfx.lineTo(wall.x1, HEIGHT - wall.y1);
     gfx.stroke();
 }
 
-function drawAABB(aabb)
-{
+function drawAABB(aabb) {
     drawBlock(aabb.x, aabb.y, aabb.width, aabb.height);
 }
 
-function drawBlock(x, y, w, h)
-{
+function drawBlock(x, y, w, h) {
     gfx.beginPath();
     gfx.rect(x, HEIGHT - y, w, -h);
     gfx.fill();
 }
 
-function getMousePos(canvas, evt)
-{
+function getMousePos(canvas, evt) {
     let rect = canvas.getBoundingClientRect();
     return {
         x: Math.trunc(evt.clientX - rect.left),
@@ -859,8 +747,7 @@ function getMousePos(canvas, evt)
     };
 }
 
-function getTouchPos(canvas, evt)
-{
+function getTouchPos(canvas, evt) {
     let rect = canvas.getBoundingClientRect();
     return {
         x: Math.trunc(evt.touches[0].clientX - rect.left),
@@ -868,8 +755,7 @@ function getTouchPos(canvas, evt)
     };
 }
 
-function getIntersect(x1, y1, x2, y2, x3, y3, x4, y4)
-{
+function getIntersect(x1, y1, x2, y2, x3, y3, x4, y4) {
     let x = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4));
     let y = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4));
 

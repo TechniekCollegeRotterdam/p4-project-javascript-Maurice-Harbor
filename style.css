@@ -20,7 +20,7 @@ body {
     width: 50%;
     height: 50%;
     border-radius: 50px;
-   box-shadow: 0 20px 50px 0 rgb(253, 0, 0), 0 6px 20px 0 rgba(122, 22, 22, 0.795);
+    box-shadow: 0 20px 50px 0 rgb(253, 0, 0), 0 6px 20px 0 rgba(122, 22, 22, 0.795);
 }
 
 .but {
@@ -32,7 +32,7 @@ body {
 }
 
 .but:hover {
-        box-shadow: 0 14px 48px rgba(148, 250, 250, 0.932), 0 10px 10px rgb(0, 225, 255);
+    box-shadow: 0 14px 48px rgba(148, 250, 250, 0.932), 0 10px 10px rgb(0, 225, 255);
 }
 
 #container {
@@ -62,5 +62,3 @@ body {
 .indent {
     margin: 0px 28px
 }
-
-
